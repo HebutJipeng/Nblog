@@ -38,6 +38,7 @@ nav {
     margin-left: -12em;
     width: 9em;
     text-align: right;
+    clear: both;
 }
 
 nav a {

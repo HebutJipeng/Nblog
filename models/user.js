@@ -29,7 +29,7 @@ User.prototype.save = function(callback) {
                 return callback(err); //错误返回err信息
             }
             //将用户数据插入users集合
-            collection.insert(users, {
+            collection.insert(user, {
                 safe: true
             }, function(err, user) {
                 mongodb.close();

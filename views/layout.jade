@@ -16,4 +16,9 @@ html(lang='en')
 			span
 				a(title='注册', href='reg') register
 	article
+		if(success)
+			p #{success}
+		if(error)
+			p #{error}
+			
 		block content		

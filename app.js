@@ -8,8 +8,8 @@ var bodyParser = require('body-parser');
 var routes = require('./routes/index');
 var settings = require('./settings');
 var flash = require('connect-flash');
-
 var session = require('express-session');
+
 var MongoStore = require('connect-mongo')(session);
 
 var app = express();
@@ -18,7 +18,8 @@ app.set('port', process.env.PORT || 3000);
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
-app.use(flash());
+
+
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -27,6 +28,24 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(session({
+  secret: settings.cookieSecret,
+  key: settings.db,//cookie name
+  cookie: {maxAge: 1000*60*60*24*30}, //30 days
+  store: new MongoStore({
+    db: settings.db,
+    host: settings.host,
+    port: settings.port
+  }),
+
+  resave:false,
+  saveUninitialized:true
+
+}));
+
+
+app.use(flash());
 
 routes(app);
 
@@ -62,17 +81,6 @@ app.use(function(err, req, res, next) {
 });
 
 
-app.use(session({
-  secret: settings.cookieSecret,
-  key: settings.db,//cookie name
-  cookie: {maxAge: 1000*60*60*24*30}, //30 days
-  store: new MongoStore({
-    db: settings.db,
-    host: settings.host,
-    port: settings.port
-  })
-
-}));
 
 
 module.exports = app;

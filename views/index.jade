@@ -2,4 +2,11 @@ extends layout
 
 block content
 	h2 这是主页~
-	
+	each post,index in posts
+		h2
+			a(href='#') #{post.title}
+		p.info
+			| 作者： 
+			a(href='#') #{post.name}
+			|  | 日期： #{post.time.minute}
+		p #{post.post}

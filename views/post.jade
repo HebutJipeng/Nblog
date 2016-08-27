@@ -4,4 +4,9 @@ block content
 	form(method='post')
 		|标题:
 		br
-		input
+		input(type='text', name='title')
+		br
+		|正文：
+		textarea(name='post', rows='20', cols='100')
+		br
+		input(type='submit', value='发表')

@@ -11,10 +11,16 @@ html(lang='en')
 				a(title='主页', href='/') home
 		nav
 			span
+				a(title='文件上传', href='/upload') upload
+		nav
+			span
+				a(title='发表', href='/post') post
+		nav
+			span
 				a(title='登陆', href='/login') login
 		nav
 			span
-				a(title='注册', href='reg') register
+				a(title='注册', href='/reg') register
 	article
 		if(success)
 			p #{success}

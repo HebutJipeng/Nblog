@@ -2,6 +2,7 @@ extends layout
 
 block content
 	p
+	if(user && user.name == post.name)
 		span
 			a.edit(href='/edit/#{post.name}/#{post.time.day}/#{post.title}') 编辑
 		span

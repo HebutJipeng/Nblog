@@ -9,3 +9,5 @@
 
 
 ./mongod --dbpath ../blog/
+
+>在不同的环境中，如果遇到upload功能，需要修改cb中的url地址

@@ -5,8 +5,8 @@ var crypto = require('crypto'),
 
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        //cb(null, 'E:/Nblog/blog/public/images/uploads')
-	cb(null,'D:/Jipeng/Nblog/public/images/uploads')
+        cb(null, 'E:/Nblog/blog/public/images/uploads')
+	//cb(null,'D:/Jipeng/Nblog/public/images/uploads')
     },
     filename: function(req, file, cb) {
         cb(null, file.originalname)
@@ -245,6 +245,19 @@ module.exports = function(app) {
             }
             req.flash('success', '修改成功!');
             res.redirect(url);
+        });
+    });
+
+    app.get('/remove/:name/:day/:title', checkLogin);
+    app.get('/remove/:name/:day/:title', function(req, res) {
+        var currentUser = req.session.user;
+        Post.remove(currentUser.name, req.params.day, req.params.title, function(err){
+            if (err) {
+                req.flash('error', err);
+                return res.redirect('back');
+            }
+            req.flash('success', '删除成功！');
+            res.redirect('/');
         });
     });
 

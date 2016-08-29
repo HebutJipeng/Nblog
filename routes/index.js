@@ -5,7 +5,8 @@ var crypto = require('crypto'),
 
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'E:/Nblog/blog/public/images/uploads')
+        //cb(null, 'E:/Nblog/blog/public/images/uploads')
+	cb(null,'D:/Jipeng/Nblog/public/images/uploads')
     },
     filename: function(req, file, cb) {
         cb(null, file.originalname)
@@ -18,7 +19,7 @@ var upload = multer({
 
 module.exports = function(app) {
     app.get('/', function(req, res) {
-        Post.get(null, function(err, posts) {
+        Post.getAll(null, function(err, posts) {
             if (err) {
                 posts = [];
             }
@@ -172,6 +173,79 @@ module.exports = function(app) {
         req.flash('success', '文件上传成功');
         res.redirect('/upload');
 
+    });
+
+    app.get('/u/:name', function(req, res) {
+        User.get(req.params.name, function(err, user) {
+            if (!user) {
+                req.flash('error', '用户不存在');
+                return res.redirect('/'); //用户不存在则跳转到主页
+            }
+            //查询并返回该用户的所有文章
+            Post.getAll(user.name, function(err, posts) {
+                if (err) {
+                    req.flash('error', err);
+                    return res.redirect('/');
+                }
+                res.render('user', {
+                    title: user.name,
+                    posts: posts,
+                    user: req.session.user,
+                    success: req.flash('success').toString(),
+                    error: req.flash('error').toString()
+                });
+            });
+        });
+    }); 
+
+    app.get('/u/:name/:day/:title', function(req, res) {
+        Post.getOne(req.params.name, req.params.day, req.params.title, function(err, post) {
+            if (err) {
+                req.flash('error', err);
+                return res.redirect('/');
+            }
+            res.render('article', {
+                title: req.params.name,
+                post: post,
+                user: req.session.user,
+                success: req.flash('success').toString(),
+                error: req.flash('error').toString()
+            });
+        });
+    });
+
+    //修改
+    app.get('/edit/:name/:day/:title', checkLogin);
+    app.get('/edit/:name/:day/:title', function(req, res) {
+        var currentUser = req.session.user;
+        Post.edit(currentUser.name, req.params.day, req.params.title, function(err, post) {
+            if (err) {
+                req.flash('error', err);
+                return res.redirect('back');
+            }
+            res.render('edit', {
+                title: '编辑',
+                post: post,
+                user: req.session.user,
+                success: req.flash('success').toString(),
+                error: req.flash('error').toString()
+            });
+        });
+    });
+
+    app.post('/edit/:name/:day/:title', checkLogin);
+    app.post('/edit/:name/:day/:title', function(req, res) {
+        var currentUser = req.session.user;
+        Post.upload(currentUser.name, req.params.day, req.params.title, req.body.post,function(err) {
+            var url = encodeURI('/u/' + req.params.name + '/' + req.params.day + '/' + req.params.title);
+            //encodeURI() 函数可把字符串作为 URI 进行编码
+            if (err) {
+                req.flash('error', err);
+                return res.redirect(url); //返回文章页
+            }
+            req.flash('success', '修改成功!');
+            res.redirect(url);
+        });
     });
 
     function checkLogin(req, res, next) {

@@ -53,7 +53,7 @@ Post.prototype.save = function(callback) {
 };
 
 //读取文章及其相关信息
-Post.get = function(name, callback) {
+Post.getAll = function(name, callback) {
 	//打开数据库
 	mongodb.open(function(err, db) {
 		if (err) {
@@ -84,6 +84,96 @@ Post.get = function(name, callback) {
 				});
 
 				callback(null, docs); // 成功！以数组形式返回查询的结果
+			});
+		});
+	});
+};
+
+//获取一篇文章
+Post.getOne = function(name, day, title, callback) {
+	//打开数据库
+	mongodb.open(function(err, db) {
+		if (err) {
+			return callback(err);
+		}
+		//读取 posts 集合
+		db.collection('posts', function(err, collection) {
+			if (err) {
+				mongodb.close();
+				return callback(err);
+			}
+			//根据用户名、发表日期及文章名查询
+			collection.findOne({
+				"name": name,
+				"time.day": day,
+				"title": title
+			}, function(err, doc) {
+				mongodb.close();
+				if (err) {
+					return callback(err);
+				}
+				//解析markdown 为html
+				doc.post = markdown.toHTML(doc.post);
+				callback(null, doc);
+			});
+		});
+	});
+};
+
+//返回原始发表的内容（markdown 格式）
+Post.edit = function(name, day, title, callback) {
+	//打开数据库
+	mongodb.open(function(err, db) {
+		if (err) {
+			return callback(err);
+		}
+		//读取 posts 集合
+		db.collection('posts', function(err, collection) {
+			if (err) {
+				mongodb.close();
+				return callback(err);
+			}
+			//根据用户名、发表日期以及文章名进行查询
+			collection.findOne({
+				"name": name,
+				"time.day": day,
+				"title": title
+			}, function(err, doc) {
+				mongodb.close();
+				if (err) {
+					return callback(err);
+				}
+				callback(null, doc); //返回查询的一篇文章（markdown格式
+			});
+		});
+	});
+};
+
+//更新一篇文章及其相关信息
+Post.update = function(name, day, title, post, callback) {
+	//打开数据库
+	mongodb.open(function(err, db) {
+		if (err) {
+			return callback(err);
+		}
+		//读取posts 集合
+		db.collection('posts', function(err, collection){
+			if (err) {
+				mongodb.close();
+				return callback(err);
+			}
+			//更新文章内容
+			collection.update({
+				"name": name,
+				"time.day": day,
+				"title": title
+			}, {
+				$set: {post: post}
+			}, function(err) {
+				if (err) {
+					return callback(err);
+				}
+				callback(null);
 			});
 		});
 	});

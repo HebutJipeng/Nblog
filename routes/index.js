@@ -1,7 +1,8 @@
 var crypto = require('crypto'),
     User = require('../models/user.js'),
     Post = require('../models/post.js'),
-    multer = require('multer');
+    multer = require('multer'),
+    Comment = require('../models/comment.js');
 
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -236,7 +237,7 @@ module.exports = function(app) {
     app.post('/edit/:name/:day/:title', checkLogin);
     app.post('/edit/:name/:day/:title', function(req, res) {
         var currentUser = req.session.user;
-        Post.upload(currentUser.name, req.params.day, req.params.title, req.body.post,function(err) {
+        Post.update(currentUser.name, req.params.day, req.params.title, req.body.post,function(err) {
             var url = encodeURI('/u/' + req.params.name + '/' + req.params.day + '/' + req.params.title);
             //encodeURI() 函数可把字符串作为 URI 进行编码
             if (err) {

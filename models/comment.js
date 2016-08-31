@@ -1,4 +1,4 @@
-var mongodb = require('/db');
+var mongodb = require('./db');
 
 function Comment(name, day, title, comment) {
 	// body...

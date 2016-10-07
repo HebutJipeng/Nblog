@@ -1,0 +1,8 @@
+br
+div
+	if(!isFirstPage)
+		span.prepage
+			a(title='上一页', href='?p=#{page-1}')
+	if(!isLastPage)
+		span.nextpage
+			a(title='下一页', href='?p=#{page+1}')

@@ -14,7 +14,7 @@ form(method='post',action='/u/#{post.name}/#{post.time.day}/#{post.title}')
 		input(type='text',name='email',value='#{user.email}')
 		br
 		| 网址：
-		input(type='text',name='website',value='/u/#{user.name}')	
+		//- input(type='text',name='website',value='/u/#{user.name}')	
 	else
 		| 姓名：
 		input(type='text',name='name',)

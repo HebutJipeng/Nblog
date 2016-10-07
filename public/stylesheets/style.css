@@ -92,7 +92,7 @@ article a:hover {
 .prepage a {
     float: left;
     text-decoration: none;
-    padding: 5rem 1rem;
+    padding: 1rem 1.5rem;
     color: #ff0000;
     font-weight: bold;
 }
@@ -100,7 +100,7 @@ article a:hover {
 .nextpage a {
     float: right;
     text-decoration: none;
-    padding-right: 5rem 1rem;
+    padding: 1rem 1.5rem;
     color: #ff0000;
     font-weight: bold;
 }

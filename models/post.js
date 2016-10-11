@@ -260,3 +260,33 @@ Post.getTen = function(name, page, callback) {
     	})
     })
 }
+
+//返回所有文章的存档信息
+Post.getArchive = (callback) => {
+    mongodb.open((err, db) => {
+        if (err) {
+            callback(err)
+        }
+        //读取posts集合
+        db.collection('posts', (err, collection) => {
+            if (err) {
+                mongodb.close()
+                return callback(err)
+            }
+            //返回只包含 name / time 、 title属性的文档组成的存档数组
+            collection.find({}, {
+                'name': 1,
+                'time': 1,
+                'title': 1
+            }).sort({
+                time: -1
+            }).toArray((err, docs) => {
+                mongodb.close()
+                if (err) {
+                    return callback(err)
+                }
+                callback(null, docs)
+            })
+        })
+    })
+}

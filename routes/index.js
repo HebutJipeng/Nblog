@@ -40,6 +40,7 @@ module.exports = function(app) {
             if (err) {
                 posts = []
             }
+            console.log('------>this is get ', posts)
             res.render('index', {
                 title: '主页',
                 posts: posts,
@@ -158,9 +159,10 @@ module.exports = function(app) {
 
     app.post('/post', checkLogin);
     app.post('/post', function(req, res) {
+        console.log(req.body)
         var currentUser = req.session.user,
             tags = [req.body.tag1, req.body.tag2, req.body.tag3],
-            post = new Post(currentUser.name, req.body.title, req.body.post);
+            post = new Post(currentUser.name, req.body.title, req.body.post, tags);
         post.save(function(err) {
             if (err) {
                 req.flash('error', err);

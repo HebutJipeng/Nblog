@@ -127,3 +127,21 @@ article a:hover {
     color: #999;
     margin-right: 1.2rem;
 }
+
+.tag {
+    background-color: #ff0000;
+    border-radius: 3px;
+    font-size: 14px;
+    color: #fff;
+    display: inline-block;
+    padding: 0 5px;
+    margin-bottom: 8px;
+}
+
+.tag:hover {
+    text-decoration: none;
+    background-color: #fff;
+    color: #000;
+    -webkit-transition: color .2s linear;
+}
+

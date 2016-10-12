@@ -9,6 +9,11 @@ block content
 			| 作者： 
 			a(href='u/#{post.name}') #{post.name}
 			|  | 日期： #{post.time.minute}
+			| 标签：
+			each tag,key in post.tags
+			post.tags.forEach()
+				if (tag)
+					a.tag(href='/tags/#{tag}') #{tag}
 		p #{post.post}
 
 	include paging

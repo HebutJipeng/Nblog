@@ -2,15 +2,15 @@ extends layout
 
 block content
 	ul.archive
-		-  var lastYear = 0
-		-  posts.forEach(function(post, index) {
-			-  if (lastYear != post.time.year)
+		- var lastYear = 0
+		- posts.forEach(function(post, index) {
+			- if (lastYear != post.time.year)
 				li
-					h3 {post.time.year}
-			-  lastYear = post.time.year
-			li
-				time  {post.time.year}
-			li
-				a(href='/u/{post.name}/{post.time.day}/{post.title}') {post.title}
+					h3 #{post.time.year}
+					- lastYear = post.time.year
+				li
+					time  #{post.time.year}
+				li
+					a(href='/u/#{post.name}/#{post.time.day}/#{post.title}') #{post.title}
 		- })
 include paging

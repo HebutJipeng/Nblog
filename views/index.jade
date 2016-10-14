@@ -13,5 +13,7 @@ block content
 			each tag in post.tags
 				a.tag(href='/tag/#{tag}') #{tag}			
 		p #{post.post}
+		p.info 
+			| 阅读: #{post.pv} | 评论 #{post.comments.length}
 
 	include paging

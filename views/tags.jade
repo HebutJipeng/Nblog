@@ -1,0 +1,7 @@
+extends layout
+
+block content
+	each tag,index in posts
+		a.tag(href='/tags/#{tag}') #{tag}
+
+include paging

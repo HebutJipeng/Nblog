@@ -40,7 +40,6 @@ module.exports = function(app) {
             if (err) {
                 posts = []
             }
-            console.log('------>this is get ', posts)
             res.render('index', {
                 title: '主页',
                 posts: posts,
@@ -56,8 +55,6 @@ module.exports = function(app) {
 
     app.get('/reg', checkNotLogin);
     app.get('/reg', function(req, res) {
-        console.log('success==>', req.flash('success').toString());
-        console.log('error==>', req.flash('error').toString());
         res.render('reg', {
             title: '注册',
             user: req.session.user,
@@ -74,7 +71,6 @@ module.exports = function(app) {
         //检测两次密码是否一致
         if (password_re != password) {
             req.flash('error', '两次输入的密码不一致！');
-            console.log('000');
             return res.redirect('/reg'); //返回注册页
         }
         //生成密码的md5
@@ -93,7 +89,6 @@ module.exports = function(app) {
             }
             if (user) {
                 req.flash('error', '用户已存在！')
-                console.log('111');
                 return res.redirect('/reg'); //返回注册页
             }
 
@@ -101,7 +96,6 @@ module.exports = function(app) {
             newUser.save(function(err, user) {
                 if (err) {
                     req.flash('error', err);
-                    console.log('333', err);
                     return res.redirect('/reg'); //注册失败
                 }
 
@@ -159,7 +153,6 @@ module.exports = function(app) {
 
     app.post('/post', checkLogin);
     app.post('/post', function(req, res) {
-        console.log(req.body)
         var currentUser = req.session.user,
             tags = [req.body.tag1, req.body.tag2, req.body.tag3],
             post = new Post(currentUser.name, req.body.title, req.body.post, tags);
@@ -192,7 +185,6 @@ module.exports = function(app) {
 
     app.post('/upload', checkLogin);
     app.post('/upload', upload.single('field1'), function(req, res) {
-        console.log('havedone');
         req.flash('success', '文件上传成功');
         res.redirect('/upload');
 
@@ -206,6 +198,41 @@ module.exports = function(app) {
             }
             res.render('archive', {
                 title: '存档',
+                posts: posts,
+                user: req.session.user,
+                success: req.flash('success').toString(),
+                error: req.flash('error').toString()
+            })
+        })
+    })
+
+    app.get('/tags', (req, res) => {
+        Post.getTags((err, posts) => {
+            if (err) {
+                req.flash('error', err)
+                return res.redirect('/')
+            }
+            console.log('posts')
+            res.render('tags', {
+                title: '标签',
+                posts: posts,
+                user: req.session.user,
+                success: req.flash('success').toString(),
+                error: req.flash('error').toString()
+
+            })
+        })
+    })
+
+    app.get('/tags/:tag', (req, res) => {
+        Post.getTag(req.params.tag, (err, posts) => {
+            if (err) {
+                req.flash('error', err)
+                return res.redirect('/')
+            }
+            console.log(posts)
+            res.render('tag', {
+                title: 'TAG:' +req.params.tag,
                 posts: posts,
                 user: req.session.user,
                 success: req.flash('success').toString(),
@@ -329,7 +356,6 @@ module.exports = function(app) {
         if (!req.session.user) {
             req.flash('error', '用户未登录');
             return res.redirect('/login');
-            console.log('checkLogin===>');
         }
         next();
     }
@@ -337,7 +363,6 @@ module.exports = function(app) {
     function checkNotLogin(req, res, next) {
         if (req.session.user) {
             req.flash('error', '已登录');
-            console.log('checkNotLogin===>');
             return res.redirect('back'); //返回之前的页面！！！    
         }
         next();

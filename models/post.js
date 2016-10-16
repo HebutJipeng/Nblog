@@ -106,21 +106,17 @@ Post.getOne = function(name, day, title, callback) {
                 mongodb.close();
                 return callback(err);
             }
-            console.log('doc.post2222====>');
             //根据用户名、发表日期及文章名查询
             collection.findOne({
                 "name": name,
                 "time.day": day,
                 "title": title
             }, function(err, doc) {
-                console.log('err222222 =====>', doc);
                 mongodb.close();
                 if (err) {
-                    console.log('err =====>', err);
                     return callback(err);
                 }
                 //解析markdown 为html
-                console.log('doc.post====>', doc.post);
                 if (doc) {
                     //每访问一次， pv值增加1
                     collection.update({
@@ -277,7 +273,7 @@ Post.getTen = function(name, page, callback) {
 Post.getArchive = (callback) => {
     mongodb.open((err, db) => {
         if (err) {
-            callback(err)
+            return callback(err)
         }
         //读取posts集合
         db.collection('posts', (err, collection) => {
@@ -290,6 +286,61 @@ Post.getArchive = (callback) => {
                 'name': 1,
                 'time': 1,
                 'title': 1
+            }).sort({
+                time: -1
+            }).toArray((err, docs) => {
+                mongodb.close()
+                if (err) {
+                    return callback(err)
+                }
+                callback(null, docs)
+            })
+        })
+    })
+}
+
+//返回所有tags的
+Post.getTags = (callback) => {
+    mongodb.open((err, db) => {
+        if (err) {
+            return callback(err)
+        }
+        db.collection('posts', (err, collection) => {
+            if (err) {
+                return callback(err)
+            }
+            collection.distinct('tags', (err, docs) => {
+                mongodb.close()
+                if (err) {
+                    return callback(err)
+                }
+                callback('null', docs)
+            })
+        })
+    })
+}
+
+
+
+//返回某个tag的所有文章
+Post.getTag = (tag, callback) => {
+    mongodb.open((err, db) => {
+        if (err) {
+            return callback(err)
+        }
+        db.collection('posts', (err, collection) => {
+            if (err) {
+                mongodb.close()
+                return callback(err)
+            }
+            //查询所有tags数组内包含tag 的文档
+            //并返回name, time, title组成的文档
+            collection.find({
+                "tags": tag
+            }, {
+                name: 1,
+                time: 1,
+                title: 1
             }).sort({
                 time: -1
             }).toArray((err, docs) => {
